@@ -44,6 +44,15 @@ type Runner interface {
 	Run(ec ExecutionContext) error
 }
 
+// RunnerFunc wraps a function to make it satisfy the Runner interface.
+type RunnerFunc func(ec ExecutionContext) error
+
+// Run implements Runner by calling itself with the ExecutionContext and
+// returning its own error.
+func (rf RunnerFunc) Run(ec ExecutionContext) error {
+	return rf(ec)
+}
+
 // Dispatch is a mapping from a command name, which is taken as an argument on
 // the command line, to a Runner.
 type Dispatch map[string]Runner

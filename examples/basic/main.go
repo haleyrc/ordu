@@ -20,7 +20,7 @@ func main() {
 	mgr.Dispatch = ordu.Dispatch{
 		"greet":  Greeter("Hello"),
 		"mangle": NewMangler(),
-		"lang":   LanguageReporter("en_US.UTF-8"),
+		"lang":   ordu.RunnerFunc(PrintLang),
 	}
 	if len(os.Args) == 1 {
 		mgr.PrintCommands()
@@ -85,12 +85,10 @@ func (m Mangler) mangleByte(r rune) rune {
 	return r
 }
 
-type LanguageReporter string
-
-func (lr LanguageReporter) Run(ec ordu.ExecutionContext) error {
+func PrintLang(ec ordu.ExecutionContext) error {
 	lang, ok := ec.Environment.Lookup("LANG")
 	if !ok {
-		lang = string(lr)
+		lang = "en_US.UTF-8"
 	}
 	fmt.Println(lang)
 	return nil
