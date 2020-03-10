@@ -18,9 +18,9 @@ func main() {
 		panic(err)
 	}
 	mgr.Dispatch = ordu.Dispatch{
-		"greet":  NewGreeter("Hello"),
+		"greet":  Greeter("Hello"),
 		"mangle": NewMangler(),
-		"lang":   NewLanguageReporter(),
+		"lang":   LanguageReporter("en_US.UTF-8"),
 	}
 	if len(os.Args) == 1 {
 		mgr.PrintCommands()
@@ -31,19 +31,13 @@ func main() {
 	}
 }
 
-func NewGreeter(greeting string) Greeter {
-	return Greeter{Greeting: greeting}
-}
-
-type Greeter struct {
-	Greeting string
-}
+type Greeter string
 
 func (g Greeter) Run(ec ordu.ExecutionContext) error {
 	fs := flag.NewFlagSet("greeter", flag.PanicOnError)
 	name := fs.String("name", "World", "The name of the person to greet")
 	fs.Parse(ec.Args)
-	fmt.Printf("%s, %s!\n", g.Greeting, *name)
+	fmt.Printf("%s, %s!\n", g, *name)
 	return nil
 }
 
@@ -91,16 +85,12 @@ func (m Mangler) mangleByte(r rune) rune {
 	return r
 }
 
-func NewLanguageReporter() LanguageReporter {
-	return LanguageReporter{}
-}
-
-type LanguageReporter struct{}
+type LanguageReporter string
 
 func (lr LanguageReporter) Run(ec ordu.ExecutionContext) error {
 	lang, ok := ec.Environment.Lookup("LANG")
 	if !ok {
-		lang = "en_US.UTF-8"
+		lang = string(lr)
 	}
 	fmt.Println(lang)
 	return nil
