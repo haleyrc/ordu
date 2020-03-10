@@ -27,7 +27,7 @@ func loadEnvironment(e Environment) (Environment, error) {
 	for _, one := range all {
 		parts := strings.SplitN(one, "=", 2)
 		if len(parts) != 2 {
-			return nil, errors.New("ordu: LoadEnvironment: invalid number of segments")
+			return nil, errors.New("LoadEnvironment: invalid number of segments")
 		}
 		e[parts[0]] = parts[1]
 	}
